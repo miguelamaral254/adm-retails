@@ -87,7 +87,15 @@ const SpeakerList: React.FC = () => {
               key={speaker.idSpeaker}
               className="border border-gray-300 p-4 rounded shadow bg-white text-black flex justify-between items-center"
             >
-              <p className="text-lg font-semibold">{speaker.name}</p>
+              <div>
+                <p className="text-lg font-semibold">{speaker.name}</p>
+                <p className="text-sm text-gray-700 mt-1">
+                  <span className="font-medium">Descrição:</span> {speaker.description}
+                </p>
+                <p className="text-sm text-gray-700 mt-1">
+                  <span className="font-medium">Cargo:</span> {speaker.role}
+                </p>
+              </div>
               <div className="flex gap-4">
                 <button
                   onClick={() => handleEdit(speaker.idSpeaker)}

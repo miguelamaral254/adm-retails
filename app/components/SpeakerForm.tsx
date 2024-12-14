@@ -7,16 +7,20 @@ import { CreateSpeaker } from "../interfaces/createSpeaker";
 
 const SpeakerForm: React.FC = () => {
   const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [role, setRole] = useState<string>("");
   const { showSuccess, showError } = useSweetAlert();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const newSpeaker: CreateSpeaker = { name };
+      const newSpeaker: CreateSpeaker = { name, description, role };
       await speakerService.createSpeaker(newSpeaker);
       await showSuccess("Sucesso", "Palestrante adicionado com sucesso!");
       setName("");
+      setDescription("");
+      setRole("");
     } catch (error) {
       console.error("Erro ao adicionar palestrante:", error);
       await showError("Erro", "Falha ao adicionar o palestrante. Tente novamente.");
@@ -34,6 +38,32 @@ const SpeakerForm: React.FC = () => {
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
+          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label htmlFor="description" className="block font-semibold text-gray-700 mb-2">
+          Descrição do Palestrante
+        </label>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows={4}
+        />
+      </div>
+      <div>
+        <label htmlFor="role" className="block font-semibold text-gray-700 mb-2">
+          Cargo do Palestrante
+        </label>
+        <input
+          type="text"
+          id="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
           required
           className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
