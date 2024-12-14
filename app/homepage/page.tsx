@@ -46,7 +46,7 @@ const UserHomePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gray-100 flex flex-col text-gray-800 items-center justify-center">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Bem-vindo!</h2>
         <p className="text-lg mb-2">

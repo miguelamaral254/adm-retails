@@ -33,6 +33,18 @@ const activityService = {
       throw new Error('Erro desconhecido ao criar atividade. Tente novamente.');
     }
   },
+  deleteActivity: async (id: number): Promise<void> => {
+    try {
+      await api.delete(`/activities/${id}`);
+      console.log(`Atividade com ID ${id} deletada com sucesso.`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Erro ao deletar atividade:', error.message);
+        throw new Error(error.message);
+      }
+      throw new Error('Erro desconhecido ao deletar atividade. Tente novamente.');
+    }
+  },
 };
 
 export default activityService;

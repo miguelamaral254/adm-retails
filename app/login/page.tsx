@@ -45,7 +45,7 @@ const LoginPage = () => {
               id="email"
               type="email"
               placeholder="Digite seu e-mail"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 text-gray-600 focus:ring-blue-500 focus:border-blue-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}

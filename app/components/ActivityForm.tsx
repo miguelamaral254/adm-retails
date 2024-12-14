@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import activityService from '../services/activityService';
 import speakerService from '../services/speakerService';
+import useSweetAlert from '../hooks/useSweetAlert';
 
 const ActivityForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const ActivityForm: React.FC = () => {
   });
   const [speakers, setSpeakers] = useState<{ idSpeaker: number; name: string }[]>([]);
   const [selectedSpeakers, setSelectedSpeakers] = useState<number[]>([0]);
+  const { showSuccess, showError } = useSweetAlert();
 
   useEffect(() => {
     const fetchSpeakers = async () => {
@@ -19,11 +21,12 @@ const ActivityForm: React.FC = () => {
         const response = await speakerService.getAllSpeakers();
         setSpeakers(response);
       } catch (error) {
+        showError('Erro', 'Erro ao buscar palestrantes.');
         console.error('Erro ao buscar palestrantes:', error);
       }
     };
     fetchSpeakers();
-  }, []);
+  }, [showError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -55,7 +58,7 @@ const ActivityForm: React.FC = () => {
       console.log('Objeto enviado:', activityData);
 
       await activityService.createActivity(activityData);
-      alert('Atividade criada com sucesso!');
+      showSuccess('Sucesso', 'Atividade criada com sucesso!');
       setFormData({
         title: '',
         description: '',
@@ -65,8 +68,8 @@ const ActivityForm: React.FC = () => {
       });
       setSelectedSpeakers([0]);
     } catch (error) {
+      showError('Erro', 'Erro ao criar atividade.');
       console.error('Erro ao criar atividade:', error);
-      alert('Erro ao criar atividade.');
     }
   };
 
