@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import activityService from '../services/activityService';
+import speakerService from '../services/speakerService';
 
 const ActivityForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -8,12 +9,38 @@ const ActivityForm: React.FC = () => {
     time: '',
     date: '',
     location: '',
-    speakerId: '',
   });
+  const [speakers, setSpeakers] = useState<{ idSpeaker: number; name: string }[]>([]);
+  const [selectedSpeakers, setSelectedSpeakers] = useState<number[]>([0]);
+
+  useEffect(() => {
+    const fetchSpeakers = async () => {
+      try {
+        const response = await speakerService.getAllSpeakers();
+        setSpeakers(response);
+      } catch (error) {
+        console.error('Erro ao buscar palestrantes:', error);
+      }
+    };
+    fetchSpeakers();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSpeakerChange = (index: number, value: number) => {
+    const updatedSpeakers = [...selectedSpeakers];
+    updatedSpeakers[index] = value;
+    setSelectedSpeakers(updatedSpeakers);
+    if (!updatedSpeakers.includes(0)) {
+      setSelectedSpeakers([...updatedSpeakers, 0]);
+    }
+  };
+
+  const availableSpeakers = (index: number) => {
+    return speakers.filter((speaker) => !selectedSpeakers.includes(speaker.idSpeaker) || selectedSpeakers[index] === speaker.idSpeaker);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,12 +48,8 @@ const ActivityForm: React.FC = () => {
 
     try {
       const activityData = {
-        title: formData.title,
-        description: formData.description,
-        time: formData.time,
-        date: formData.date,
-        location: formData.location,
-        speakerId: [Number(formData.speakerId)],
+        ...formData,
+        speakerId: selectedSpeakers.filter((id) => id !== 0),
       };
 
       console.log('Objeto enviado:', activityData);
@@ -39,8 +62,8 @@ const ActivityForm: React.FC = () => {
         time: '',
         date: '',
         location: '',
-        speakerId: '',
       });
+      setSelectedSpeakers([0]);
     } catch (error) {
       console.error('Erro ao criar atividade:', error);
       alert('Erro ao criar atividade.');
@@ -105,15 +128,26 @@ const ActivityForm: React.FC = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-black mb-1">ID do Palestrante:</label>
-        <input
-          type="number"
-          name="speakerId"
-          value={formData.speakerId}
-          onChange={handleChange}
-          required
-          className="form-control"
-        />
+        <label className="block text-sm font-medium text-black mb-1">Palestrantes:</label>
+        {selectedSpeakers.map((speakerId, index) => (
+          <div key={index} className="mb-2">
+            <select
+              value={speakerId}
+              onChange={(e) => handleSpeakerChange(index, Number(e.target.value))}
+              className="form-control"
+              required={index === 0}
+            >
+              <option value={0} disabled>
+                Selecione um palestrante
+              </option>
+              {availableSpeakers(index).map((speaker) => (
+                <option key={speaker.idSpeaker} value={speaker.idSpeaker}>
+                  {speaker.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
       </div>
       <div className="text-center">
         <button
