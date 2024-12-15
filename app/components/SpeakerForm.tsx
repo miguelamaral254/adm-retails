@@ -9,18 +9,20 @@ const SpeakerForm: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [role, setRole] = useState<string>("");
+  const [company, setCompany] = useState<string>("");
   const { showSuccess, showError } = useSweetAlert();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const newSpeaker: CreateSpeaker = { name, description, role };
+      const newSpeaker: CreateSpeaker = { name, description, role, company };
       await speakerService.createSpeaker(newSpeaker);
       await showSuccess("Sucesso", "Palestrante adicionado com sucesso!");
       setName("");
       setDescription("");
       setRole("");
+      setCompany("");
     } catch (error) {
       console.error("Erro ao adicionar palestrante:", error);
       await showError("Erro", "Falha ao adicionar o palestrante. Tente novamente.");
@@ -39,7 +41,7 @@ const SpeakerForm: React.FC = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
@@ -51,7 +53,7 @@ const SpeakerForm: React.FC = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border text-gray-700 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={4}
         />
       </div>
@@ -65,7 +67,20 @@ const SpeakerForm: React.FC = () => {
           value={role}
           onChange={(e) => setRole(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full text-gray-700 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label htmlFor="company" className="block font-semibold text-gray-700 mb-2">
+          Empresa do Palestrante
+        </label>
+        <input
+          type="text"
+          id="company"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          required
+          className="w-full p-2 text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <button

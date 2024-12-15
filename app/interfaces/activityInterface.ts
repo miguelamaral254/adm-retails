@@ -1,3 +1,4 @@
+import { Area } from "./areaInterface";
 import { Checkin } from "./checkinInterface";
 import { Like } from "./likeInterface";
 import { Speaker } from "./speakerInterface";
@@ -12,4 +13,6 @@ export interface Activity {
     speaker: Speaker[];
     checkins?: Checkin[];
     likes?: Like[];
+    areaOfExpertise: Area[];
+
   }

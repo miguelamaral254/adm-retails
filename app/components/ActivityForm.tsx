@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import activityService from '../services/activityService';
 import speakerService from '../services/speakerService';
+import areaService from '../services/areaService';
 import useSweetAlert from '../hooks/useSweetAlert';
 
 const ActivityForm: React.FC = () => {
@@ -12,20 +13,27 @@ const ActivityForm: React.FC = () => {
     location: '',
   });
   const [speakers, setSpeakers] = useState<{ idSpeaker: number; name: string }[]>([]);
+  const [areas, setAreas] = useState<{ idArea: number; name: string }[]>([]);
   const [selectedSpeakers, setSelectedSpeakers] = useState<number[]>([0]);
+  const [selectedAreas, setSelectedAreas] = useState<number[]>([0]);
   const { showSuccess, showError } = useSweetAlert();
 
   useEffect(() => {
-    const fetchSpeakers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await speakerService.getAllSpeakers();
-        setSpeakers(response);
+        const [speakersResponse, areasResponse] = await Promise.all([
+          speakerService.getAllSpeakers(),
+          areaService.getAllAreas(),
+        ]);
+        setSpeakers(speakersResponse);
+        setAreas(areasResponse);
       } catch (error) {
-        showError('Erro', 'Erro ao buscar palestrantes.');
-        console.error('Erro ao buscar palestrantes:', error);
+        showError('Erro', 'Erro ao buscar dados.');
+        console.error('Erro ao buscar dados:', error);
       }
     };
-    fetchSpeakers();
+
+    fetchData();
   }, [showError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,17 +41,21 @@ const ActivityForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSpeakerChange = (index: number, value: number) => {
-    const updatedSpeakers = [...selectedSpeakers];
-    updatedSpeakers[index] = value;
-    setSelectedSpeakers(updatedSpeakers);
-    if (!updatedSpeakers.includes(0)) {
-      setSelectedSpeakers([...updatedSpeakers, 0]);
+  const handleDynamicChange = (index: number, value: number, setSelected: React.Dispatch<React.SetStateAction<number[]>>) => {
+    const updated = [...selectedSpeakers];
+    updated[index] = value;
+    setSelected(updated);
+    if (!updated.includes(0)) {
+      setSelected([...updated, 0]);
     }
   };
 
-  const availableSpeakers = (index: number) => {
-    return speakers.filter((speaker) => !selectedSpeakers.includes(speaker.idSpeaker) || selectedSpeakers[index] === speaker.idSpeaker);
+  const availableOptions = (
+    index: number,
+    selectedItems: number[],
+    items: { id: number; name: string }[]
+  ) => {
+    return items.filter((item) => !selectedItems.includes(item.id) || selectedItems[index] === item.id);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,6 +65,7 @@ const ActivityForm: React.FC = () => {
       const activityData = {
         ...formData,
         speakerId: selectedSpeakers.filter((id) => id !== 0),
+        idArea: selectedAreas.filter((id) => id !== 0),
       };
 
       console.log('Objeto enviado:', activityData);
@@ -67,6 +80,7 @@ const ActivityForm: React.FC = () => {
         location: '',
       });
       setSelectedSpeakers([0]);
+      setSelectedAreas([0]);
     } catch (error) {
       showError('Erro', 'Erro ao criar atividade.');
       console.error('Erro ao criar atividade:', error);
@@ -136,16 +150,38 @@ const ActivityForm: React.FC = () => {
           <div key={index} className="mb-2">
             <select
               value={speakerId}
-              onChange={(e) => handleSpeakerChange(index, Number(e.target.value))}
+              onChange={(e) => handleDynamicChange(index, Number(e.target.value), setSelectedSpeakers)}
               className="form-control"
               required={index === 0}
             >
               <option value={0} disabled>
                 Selecione um palestrante
               </option>
-              {availableSpeakers(index).map((speaker) => (
-                <option key={speaker.idSpeaker} value={speaker.idSpeaker}>
+              {availableOptions(index, selectedSpeakers, speakers.map(s => ({ id: s.idSpeaker, name: s.name }))).map((speaker) => (
+                <option key={speaker.id} value={speaker.id}>
                   {speaker.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-black mb-1">Áreas de Expertise:</label>
+        {selectedAreas.map((areaId, index) => (
+          <div key={index} className="mb-2">
+            <select
+              value={areaId}
+              onChange={(e) => handleDynamicChange(index, Number(e.target.value), setSelectedAreas)}
+              className="form-control"
+              required={index === 0}
+            >
+              <option value={0} disabled>
+                Selecione uma área
+              </option>
+              {availableOptions(index, selectedAreas, areas.map(a => ({ id: a.idArea, name: a.name }))).map((area) => (
+                <option key={area.id} value={area.id}>
+                  {area.name}
                 </option>
               ))}
             </select>

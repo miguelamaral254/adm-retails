@@ -103,6 +103,12 @@ const ActivityList: React.FC = () => {
                       ? activity.speaker.map((spk) => spk.name).join(', ')
                       : 'Nenhum palestrante associado'}
                   </p>
+                  <p>
+                    <span className="font-medium">Áreas de Expertise:</span>{' '}
+                    {activity.areaOfExpertise && activity.areaOfExpertise.length > 0
+                      ? activity.areaOfExpertise.map((area) => area.name).join(', ')
+                      : 'Nenhuma área associada'}
+                  </p>
                 </div>
                 <div className="flex flex-col gap-4">
                   <button

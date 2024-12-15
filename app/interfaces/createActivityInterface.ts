@@ -1,8 +1,9 @@
 export interface CreateActivity {
-    title: string;
-    description: string;
-    time: string; 
-    date: string;
-    location: string;
-    speakerId?: number[];
-  }
+  title: string;
+  description: string;
+  time: string; 
+  date: string;
+  location: string;
+  speakerId?: number[];
+  idArea: number[];
+}

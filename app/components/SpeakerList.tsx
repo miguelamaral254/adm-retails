@@ -95,6 +95,9 @@ const SpeakerList: React.FC = () => {
                 <p className="text-sm text-gray-700 mt-1">
                   <span className="font-medium">Cargo:</span> {speaker.role}
                 </p>
+                <p className="text-sm text-gray-700 mt-1">
+                  <span className="font-medium">Empresa:</span> {speaker.company}
+                </p>
               </div>
               <div className="flex gap-4">
                 <button
