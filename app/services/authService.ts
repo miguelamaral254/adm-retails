@@ -4,7 +4,7 @@ import { LoginResponse } from "../interfaces/loginResponseInterface";
 const authService = {
   login: async (email: string): Promise<LoginResponse> => {
     try {
-      const response = await api.post<LoginResponse>('/auth/login', { email });
+      const response = await api.post<LoginResponse>('/login', { email });
       const { token } = response.data;
 
       localStorage.setItem('token', token);
